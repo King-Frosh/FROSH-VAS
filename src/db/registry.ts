@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import { ensureDatabaseReady } from "@/db/init";
 import { services } from "@/db/schema";
-import { sql } from "drizzle-orm";
 
 /**
  * Service IDs uploaded by the VAS operations team.
