@@ -76,7 +76,7 @@ export default function Shell({ children }: { children: ReactNode }) {
           <BrandMark />
           <div>
             <p className="font-display text-[15px] font-bold leading-none tracking-tight text-white">
-              KoboMerge
+              BRICCSMerge
             </p>
             <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-slate-500">VAS Revenue Console</p>
           </div>
