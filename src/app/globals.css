@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--ff-display);
+  --font-sans: var(--ff-sans);
+  --font-mono: var(--ff-mono);
+}
+
+@theme {
+  --color-ink-950: #060b14;
+  --color-ink-900: #0b1524;
+  --color-ink-800: #13223a;
+  --color-ink-700: #1e3355;
+  --color-paper: #f3f5f8;
+  --color-line: #e2e7ee;
+  --color-mute: #5c6b7e;
+  --color-brand-50: #e8f6f0;
+  --color-brand-100: #cdeadd;
+  --color-brand-200: #9ed6be;
+  --color-brand-500: #12a577;
+  --color-brand-600: #0c8f63;
+  --color-brand-700: #0a7452;
+  --color-brand-800: #085c42;
+  --color-danger-600: #dc2626;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-paper);
+  background-image:
+    radial-gradient(900px 320px at 85% -80px, rgba(18, 165, 119, 0.07), transparent 70%),
+    radial-gradient(700px 280px at 8% -60px, rgba(14, 116, 144, 0.06), transparent 70%),
+    linear-gradient(to right, rgba(11, 21, 36, 0.028) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 21, 36, 0.028) 1px, transparent 1px);
+  background-size:
+    auto,
+    auto,
+    34px 34px,
+    34px 34px;
+  background-attachment: fixed;
+}
+
+.num {
+  font-family: var(--ff-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: rgba(18, 165, 119, 0.25);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #c3ccd6;
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #9aa7b5;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+@keyframes shimmer {
+  from {
+    background-position: -400px 0;
+  }
+  to {
+    background-position: 400px 0;
+  }
+}
+
+.live-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  .lg\:pl-60 {
+    padding-left: 0 !important;
+  }
+  .print-area {
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .print-area thead th {
+    position: static !important;
+  }
+}
