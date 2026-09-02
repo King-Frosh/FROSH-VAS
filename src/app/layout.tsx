@@ -23,7 +23,7 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "KoboMerge — VAS Revenue Console",
+  title: "BRICCSMerge; VAS Revenue Console",
   description:
     "Merge operator Excel exports, filter transactions by Service ID and monitor gross & net VAS revenue.",
 };
