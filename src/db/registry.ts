@@ -76,10 +76,10 @@ export const SEEDED_SERVICE_IDS: string[] = [
   "23410220008616",
   "23410220008618",
   "23410220008482",
-  "234012000026410", 
-  "234102200006485", 
+  "234012000026410",
+  "234102200006485",
   "234102200006852",
-  "234102200008198", 
+  "234102200008198",
   "234102200008616",
 ];
 
@@ -91,25 +91,29 @@ const globalForRegistry = globalThis as typeof globalThis & {
   __vasRegistryEnsured?: Promise<void>;
 };
 
-/** Idempotently seeds the uploaded service registry on first use. */
+/** Idempotently ensures every configured service ID exists in the registry. */
 export function ensureRegistry(): Promise<void> {
   if (!globalForRegistry.__vasRegistryEnsured) {
     globalForRegistry.__vasRegistryEnsured = (async () => {
       try {
         await ensureDatabaseReady();
-        const [row] = await db
-          .select({ count: sql<number>`count(*)::int`.mapWith(Number) })
-          .from(services);
-        if ((row?.count ?? 0) === 0) {
-          await db.insert(services).values(
-            SEEDED_SERVICE_IDS.map((sid) => ({
-              serviceId: sid,
-              groupCode: groupOf(sid),
-              name: "",
-              revSharePct: "70",
-              status: "active",
-            })),
-          );
+
+        // Do not seed only when the table is empty. Existing deployments may
+        // already contain older service IDs and still need newly configured IDs.
+        // The unique service_id index makes this safe to run repeatedly.
+        if (SEEDED_SERVICE_IDS.length > 0) {
+          await db
+            .insert(services)
+            .values(
+              SEEDED_SERVICE_IDS.map((sid) => ({
+                serviceId: sid,
+                groupCode: groupOf(sid),
+                name: "",
+                revSharePct: "70",
+                status: "active",
+              })),
+            )
+            .onConflictDoNothing({ target: services.serviceId });
         }
       } catch (err) {
         globalForRegistry.__vasRegistryEnsured = undefined;
