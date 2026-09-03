@@ -21,6 +21,10 @@ function numOrNull(v: string | null): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+function dateKey(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
 export function parseServerFilters(sp: URLSearchParams): ServerFilters {
   const from = sp.get("from");
   const to = sp.get("to");
@@ -42,8 +46,15 @@ export function parseServerFilters(sp: URLSearchParams): ServerFilters {
 
 export function buildWhere(f: ServerFilters): SQL | undefined {
   const c: SQL[] = [];
-  if (f.from) c.push(sql`${transactions.transactionAt} >= ${f.from}`);
-  if (f.to) c.push(sql`${transactions.transactionAt} <= ${f.to}`);
+
+  // Uploaded Excel dates are parsed as local Nigeria (WAT) dates in the browser,
+  // then serialized with toISOString() before being stored as PostgreSQL timestamp.
+  // That means a date-only value such as 01 Aug becomes 31 Jul 23:00 in storage.
+  // Filter by the Nigeria calendar date instead of comparing raw timestamps.
+  const storedNigeriaDate = sql`(${transactions.transactionAt} + interval '1 hour')::date`;
+  if (f.from) c.push(sql`${storedNigeriaDate} >= ${dateKey(f.from)}`);
+  if (f.to) c.push(sql`${storedNigeriaDate} <= ${dateKey(f.to)}`);
+
   if (f.serviceIds.length) c.push(sql`${transactions.serviceId} in (${sql.join(f.serviceIds.map((s) => sql`${s}`), sql`, `)})`);
   if (f.groups.length) c.push(sql`${transactions.groupCode} in (${sql.join(f.groups.map((s) => sql`${s}`), sql`, `)})`);
   if (f.statuses.length) c.push(sql`${transactions.status} in (${sql.join(f.statuses.map((s) => sql`${s}`), sql`, `)})`);
