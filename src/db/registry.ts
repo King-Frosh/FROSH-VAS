@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { ensureDatabaseReady } from "@/db/init";
 import { services } from "@/db/schema";
+import { REVENUE_SHARE } from "@/lib/query";
 
 /**
  * Service IDs uploaded by the VAS operations team.
@@ -104,13 +105,17 @@ export function ensureRegistry(): Promise<void> {
         // The unique service_id index makes this safe to run repeatedly.
         if (SEEDED_SERVICE_IDS.length > 0) {
           await db
+            .update(services)
+            .set({ revSharePct: String(REVENUE_SHARE.nonOperator) });
+
+          await db
             .insert(services)
             .values(
               SEEDED_SERVICE_IDS.map((sid) => ({
                 serviceId: sid,
                 groupCode: groupOf(sid),
                 name: "",
-                revSharePct: "70",
+                revSharePct: String(REVENUE_SHARE.nonOperator),
                 status: "active",
               })),
             )
