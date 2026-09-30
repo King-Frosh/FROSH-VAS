@@ -86,10 +86,31 @@ export function buildWhere(f: ServerFilters): SQL | undefined {
   return c.length ? and(...c) : undefined;
 }
 
-/** Gross = file REVENUE; net = rev-share; volume = SUM(COUNT). */
+/**
+ * Revenue allocation used across imports, reports and dashboard.
+ * Gross = 100%; Operator = 50%; BRICCS = 10%; VAS Company = 8%; CP = 32%.
+ */
+export const REVENUE_SHARE = {
+  operator: 50,
+  briccs: 10,
+  vasCompany: 8,
+  contentProvider: 32,
+  nonOperator: 50,
+} as const;
+
+export function allocateRevenue(gross: number) {
+  return {
+    operator: (gross * REVENUE_SHARE.operator) / 100,
+    briccs: (gross * REVENUE_SHARE.briccs) / 100,
+    vasCompany: (gross * REVENUE_SHARE.vasCompany) / 100,
+    contentProvider: (gross * REVENUE_SHARE.contentProvider) / 100,
+  };
+}
+
+/** Gross = file REVENUE; net = 50% non-operator share; volume = SUM(COUNT). */
 export const AGG = {
   gross: sql<number>`coalesce(sum(${transactions.revenue}::numeric), 0)`.mapWith(Number),
-  net: sql<number>`coalesce(sum(${transactions.netRevenue}::numeric), 0)`.mapWith(Number),
+  net: sql<number>`coalesce(sum(${transactions.revenue}::numeric) * ${REVENUE_SHARE.nonOperator / 100}, 0)`.mapWith(Number),
   txns: sql<number>`coalesce(sum(${transactions.txnCount}), 0)::int`.mapWith(Number),
   success: sql<number>`coalesce(sum(case when ${transactions.status} = 'success' then ${transactions.txnCount} else 0 end), 0)::int`.mapWith(Number),
   failed: sql<number>`coalesce(sum(case when ${transactions.status} = 'failed' then ${transactions.txnCount} else 0 end), 0)::int`.mapWith(Number),
