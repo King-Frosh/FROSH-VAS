@@ -445,6 +445,29 @@ function prevParams(pstr: string, filters: ReturnType<typeof useFilters>["filter
   return sp.toString();
 }
 
+function ShareLegend({
+  label,
+  share,
+  detail,
+  tone,
+}: {
+  label: string;
+  share: string;
+  detail: string;
+  tone: string;
+}) {
+  return (
+    <div className="rounded-lg border border-line bg-paper/60 px-3 py-2.5">
+      <div className="flex items-center gap-2">
+        <span className={cn("h-2.5 w-2.5 shrink-0 rounded-full", tone)} />
+        <span className="truncate text-[10px] font-semibold uppercase tracking-wider text-mute">{label}</span>
+      </div>
+      <p className="num mt-1.5 text-lg font-bold text-ink-900">{share}</p>
+      <p className="text-[10px] text-mute">{detail}</p>
+    </div>
+  );
+}
+
 function DeltaChip({ cur, prev, label }: { cur?: number; prev?: number; label?: string }) {
   if (cur == null || prev == null) return <Skeleton className="h-4 w-16" />;
   if (prev === 0)
