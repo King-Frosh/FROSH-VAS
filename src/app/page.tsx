@@ -47,6 +47,13 @@ interface Summary {
   gross: number;
   net: number;
   operatorShare: number;
+  briccsShare: number;
+  vasCompanyShare: number;
+  contentProviderShare: number;
+  operatorSharePct: number;
+  briccsSharePct: number;
+  vasCompanySharePct: number;
+  contentProviderSharePct: number;
   txns: number;
   success: number;
   failed: number;
@@ -267,7 +274,7 @@ export default function DashboardPage() {
       <Reveal delay={220}>
         <Card
           title="Revenue Share Allocation"
-          subtitle="Gross revenue allocation: Operator takes 50%; BRICCS takes 10% of the remaining 50%; the final 40% is split 20% VAS Company / 80% CP"
+          subtitle="Gross revenue is allocated as 50% Operator, 10% BRICCS, 8% VAS Company and 32% Content Provider"
         >
           <div className="space-y-4">
             <div className="flex h-9 w-full overflow-hidden rounded-lg border border-line bg-slate-100 text-[10px] font-bold text-white shadow-inner">
@@ -286,10 +293,10 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid gap-2 sm:grid-cols-4">
-              <ShareLegend label="Operator" share="50%" detail="of gross revenue" tone="bg-ink-900" />
-              <ShareLegend label="BRICCS" share="10%" detail="of gross revenue" tone="bg-brand-600" />
-              <ShareLegend label="VAS Company" share="8%" detail="20% of remaining 40%" tone="bg-cyan-600" />
-              <ShareLegend label="Content Provider (CP)" share="32%" detail="80% of remaining 40%" tone="bg-orange-500" />
+              <ShareLegend label="Operator" share="50%" detail={s ? money0(s.operatorShare) : "—"} tone="bg-ink-900" />
+              <ShareLegend label="BRICCS" share="10%" detail={s ? money0(s.briccsShare) : "—"} tone="bg-brand-600" />
+              <ShareLegend label="VAS Company" share="8%" detail={s ? money0(s.vasCompanyShare) : "—"} tone="bg-cyan-600" />
+              <ShareLegend label="Content Provider (CP)" share="32%" detail={s ? money0(s.contentProviderShare) : "—"} tone="bg-orange-500" />
             </div>
           </div>
         </Card>
@@ -463,7 +470,8 @@ function ShareLegend({
         <span className="truncate text-[10px] font-semibold uppercase tracking-wider text-mute">{label}</span>
       </div>
       <p className="num mt-1.5 text-lg font-bold text-ink-900">{share}</p>
-      <p className="text-[10px] text-mute">{detail}</p>
+      <p className="text-[10px] font-semibold text-ink-700">{detail}</p>
+      <p className="text-[9px] text-mute">revenue in selected range</p>
     </div>
   );
 }
