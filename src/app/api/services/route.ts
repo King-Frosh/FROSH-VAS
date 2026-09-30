@@ -86,7 +86,7 @@ export async function POST(req: Request) {
   const share =
     typeof body.revSharePct === "number" && body.revSharePct >= 0 && body.revSharePct <= 100
       ? String(body.revSharePct)
-      : "70";
+      : "50";
   const status = body.status === "inactive" ? "inactive" : "active";
   const res = await db
     .insert(services)
