@@ -22,7 +22,7 @@ export const services = pgTable(
     groupCode: text("group_code").notNull().default(""),
     revSharePct: numeric("rev_share_pct", { precision: 5, scale: 2 })
       .notNull()
-      .default("70"),
+      .default("50"),
     status: text("status").notNull().default("active"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
