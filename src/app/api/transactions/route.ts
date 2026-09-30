@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { ensureDatabaseReady } from "@/db/init";
 import { datasets, transactions } from "@/db/schema";
-import { buildWhere, parseServerFilters } from "@/lib/query";
+import { REVENUE_SHARE, buildWhere, parseServerFilters } from "@/lib/query";
 import { asc, desc, eq, sql, type SQL } from "drizzle-orm";
 
 const SORTS: Record<string, SQL> = {
@@ -70,7 +70,7 @@ export async function GET(req: Request) {
     ...r,
     amount: Number(r.amount),
     revenue: Number(r.revenue),
-    netRevenue: Number(r.netRevenue),
+    netRevenue: (Number(r.revenue) * REVENUE_SHARE.nonOperator) / 100,
     txnCount: Number(r.txnCount),
     transactionAt: r.transactionAt.toISOString(),
   }));
