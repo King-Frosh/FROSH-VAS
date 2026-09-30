@@ -263,6 +263,38 @@ export default function DashboardPage() {
         </Reveal>
       </div>
 
+      {/* Revenue share allocation */}
+      <Reveal delay={220}>
+        <Card
+          title="Revenue Share Allocation"
+          subtitle="Gross revenue allocation: Operator takes 50%; BRICCS takes 10% of the remaining 50%; the final 40% is split 20% VAS Company / 80% CP"
+        >
+          <div className="space-y-4">
+            <div className="flex h-9 w-full overflow-hidden rounded-lg border border-line bg-slate-100 text-[10px] font-bold text-white shadow-inner">
+              <div className="flex items-center justify-center bg-ink-900" style={{ width: "50%" }}>
+                Operator · 50%
+              </div>
+              <div className="flex items-center justify-center bg-brand-600" style={{ width: "10%" }}>
+                BRICCS · 10%
+              </div>
+              <div className="flex items-center justify-center bg-cyan-600" style={{ width: "8%" }}>
+                VAS · 8%
+              </div>
+              <div className="flex items-center justify-center bg-orange-500" style={{ width: "32%" }}>
+                CP · 32%
+              </div>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-4">
+              <ShareLegend label="Operator" share="50%" detail="of gross revenue" tone="bg-ink-900" />
+              <ShareLegend label="BRICCS" share="10%" detail="of gross revenue" tone="bg-brand-600" />
+              <ShareLegend label="VAS Company" share="8%" detail="20% of remaining 40%" tone="bg-cyan-600" />
+              <ShareLegend label="Content Provider (CP)" share="32%" detail="80% of remaining 40%" tone="bg-orange-500" />
+            </div>
+          </div>
+        </Card>
+      </Reveal>
+
       {/* Charts */}
       <div className="grid gap-3 lg:grid-cols-3">
         <Reveal className="lg:col-span-2" delay={60}>
