@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { ensureDatabaseReady } from "@/db/init";
 import { services, transactions } from "@/db/schema";
-import { AGG, AGG_EXTRA, buildWhere, parseServerFilters } from "@/lib/query";
+import { AGG, AGG_EXTRA, REVENUE_SHARE, allocateRevenue, buildWhere, parseServerFilters } from "@/lib/query";
 import { eq, sql } from "drizzle-orm";
 
 export async function GET(req: Request) {
@@ -17,10 +17,19 @@ export async function GET(req: Request) {
       .select({ ...AGG, ...AGG_EXTRA })
       .from(transactions)
       .where(where);
+    const gross = row?.gross ?? 0;
+    const allocation = allocateRevenue(gross);
     return NextResponse.json({
-      gross: row?.gross ?? 0,
+      gross,
       net: row?.net ?? 0,
-      operatorShare: (row?.gross ?? 0) - (row?.net ?? 0),
+      operatorShare: allocation.operator,
+      briccsShare: allocation.briccs,
+      vasCompanyShare: allocation.vasCompany,
+      contentProviderShare: allocation.contentProvider,
+      operatorSharePct: REVENUE_SHARE.operator,
+      briccsSharePct: REVENUE_SHARE.briccs,
+      vasCompanySharePct: REVENUE_SHARE.vasCompany,
+      contentProviderSharePct: REVENUE_SHARE.contentProvider,
       txns: row?.txns ?? 0,
       success: row?.success ?? 0,
       failed: row?.failed ?? 0,
@@ -150,7 +159,7 @@ export async function GET(req: Request) {
       known: type === "service" ? names.has(r.key) : true,
       gross: r.gross,
       net: r.net,
-      operatorShare: r.gross - r.net,
+      operatorShare: (r.gross * REVENUE_SHARE.operator) / 100,
       txns: r.txns,
       success: r.success,
       failed: r.failed,
@@ -160,7 +169,7 @@ export async function GET(req: Request) {
     totals: {
       gross: totals?.gross ?? 0,
       net: totals?.net ?? 0,
-      operatorShare: (totals?.gross ?? 0) - (totals?.net ?? 0),
+      operatorShare: ((totals?.gross ?? 0) * REVENUE_SHARE.operator) / 100,
       txns: totals?.txns ?? 0,
       success: totals?.success ?? 0,
       failed: totals?.failed ?? 0,
