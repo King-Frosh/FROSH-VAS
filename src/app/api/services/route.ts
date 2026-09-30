@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { services, transactions } from "@/db/schema";
 import { ensureRegistry, groupOf } from "@/db/registry";
+import { REVENUE_SHARE } from "@/lib/query";
 import { asc, desc, eq, ilike, sql } from "drizzle-orm";
 
 export async function GET(req: Request) {
@@ -31,7 +32,7 @@ export async function GET(req: Request) {
       serviceId: transactions.serviceId,
       txns: sql<number>`coalesce(sum(${transactions.txnCount}), 0)::int`.as("txns"),
       gross: sql<number>`coalesce(sum(${transactions.revenue}::numeric), 0)`.as("gross"),
-      net: sql<number>`coalesce(sum(${transactions.netRevenue}::numeric), 0)`.as("net"),
+      net: sql<number>`coalesce(sum(${transactions.revenue}::numeric) * ${REVENUE_SHARE.nonOperator / 100}, 0)`.as("net"),
       lastAt: sql<string>`max(${transactions.transactionAt})`.as("last_at"),
     })
     .from(transactions)
