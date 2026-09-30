@@ -74,7 +74,7 @@ export async function POST(req: Request) {
       const txnCount = Math.max(0, Math.round(Number(r?.count) || 0));
       let gross = round2(Number(r?.revenue) || 0);
       if (!gross && pricePoint && txnCount) gross = round2(pricePoint * txnCount);
-      const sharePct = share.get(serviceId) ?? 70;
+      const sharePct = share.get(serviceId) ?? 50;
       const partner = String(r?.servicePartner ?? r?.network ?? "").trim();
       const txnType = String(r?.transaction ?? "").trim();
       const productName = String(r?.productName ?? "").trim() || names.get(serviceId) || "";
