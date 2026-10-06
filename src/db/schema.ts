@@ -99,4 +99,28 @@ export const filterPresets = pgTable("filter_presets", {
 
 export type ServiceRow = typeof services.$inferSelect;
 export type TransactionRow = typeof transactions.$inferSelect;
+export const reportSettings = pgTable("report_settings", {
+  id: serial("id").primaryKey(),
+  partnerName: text("partner_name").notNull().unique(),
+  email: text("email").notNull(),
+  cc: text("cc"),
+  enabled: text("enabled").notNull().default("false").$type<"true" | "false">(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const reportDeliveryLogs = pgTable("report_delivery_logs", {
+  id: serial("id").primaryKey(),
+  partnerName: text("partner_name").notNull(),
+  reportDate: text("report_date").notNull(),
+  recipient: text("recipient").notNull(),
+  status: text("status").notNull(),
+  messageId: text("message_id"),
+  error: text("error"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type ServiceRow = typeof services.$inferSelect;
+export type TransactionRow = typeof transactions.$inferSelect;
 export type DatasetRow = typeof datasets.$inferSelect;
+export type ReportSettingRow = typeof reportSettings.$inferSelect;
