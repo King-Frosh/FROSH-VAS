@@ -20,8 +20,8 @@ export async function GET() {
 
   return NextResponse.json({
     rows: partners.map((p) => ({
-      partnerName: p.partnerName,
       ...(configured.get(p.partnerName) ?? { id: null, email: "", cc: "", enabled: false }),
+      partnerName: p.partnerName,
     })),
   });
 }
