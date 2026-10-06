@@ -103,6 +103,23 @@ export function ensureDatabaseReady(): Promise<void> {
         alter table filter_presets add column if not exists config jsonb not null default '{}'::jsonb;
         alter table filter_presets add column if not exists created_at timestamp not null default now();
 
+        alter table report_settings add column if not exists email text not null default '';
+        alter table report_settings add column if not exists cc text;
+        alter table report_settings add column if not exists enabled boolean not null default false;
+        alter table report_settings add column if not exists created_at timestamp not null default now();
+        alter table report_settings add column if not exists updated_at timestamp not null default now();
+
+        alter table report_delivery_logs add column if not exists report_date text not null default '';
+        alter table report_delivery_logs add column if not exists recipient text not null default '';
+        alter table report_delivery_logs add column if not exists status text not null default 'failed';
+        alter table report_delivery_logs add column if not exists message_id text;
+        alter table report_delivery_logs add column if not exists error text;
+        alter table report_delivery_logs add column if not exists created_at timestamp not null default now();
+
+        create unique index if not exists report_delivery_success_uq
+          on report_delivery_logs (partner_name, report_date)
+          where status = 'sent';
+
         update transactions set group_code = left(service_id, 6) where coalesce(group_code, '') = '';
         update transactions set service_partner = network where service_partner is null and network is not null;
         update transactions set net_revenue = round(revenue * 0.70, 2) where coalesce(net_revenue, 0) = 0 and revenue <> 0;
