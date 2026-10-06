@@ -9,6 +9,7 @@ import {
   integer,
   uniqueIndex,
   index,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -104,7 +105,7 @@ export const reportSettings = pgTable("report_settings", {
   partnerName: text("partner_name").notNull().unique(),
   email: text("email").notNull(),
   cc: text("cc"),
-  enabled: text("enabled").notNull().default("false").$type<"true" | "false">(),
+  enabled: boolean("enabled").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
