@@ -12,6 +12,7 @@ import {
   Plus,
   RefreshCw,
   Table2,
+  Mail,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -46,6 +47,7 @@ const TITLES: Record<string, { title: string; desc: string }> = {
   "/transactions": { title: "Transactions", desc: "Filter, inspect and export every merged row by Service ID" },
   "/services": { title: "Service registry", desc: "The uploaded Service IDs that drive filtering and revenue share" },
   "/reports": { title: "Reports", desc: "Daily, monthly and per-service summaries ready for finance" },
+  "/report-automation": { title: "Email automation", desc: "Automatically send each partner their daily VAS Excel report" },
 };
 
 interface Meta {
