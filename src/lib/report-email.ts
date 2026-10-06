@@ -45,7 +45,7 @@ function reportWorkbook(
   }>,
 ) {
   const data = rows.map((r) => ({
-    DATE: r.transactionAt.toISOString().slice(0, 10),
+    DATE: new Date(r.transactionAt.getTime() + 60 * 60 * 1000).toISOString().slice(0, 10),
     "SERVICE PARTNER": r.servicePartner ?? "",
     "SERVICE ID": r.serviceId,
     "PRICE POINT": Number(r.amount),
