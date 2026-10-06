@@ -116,9 +116,6 @@ export function ensureDatabaseReady(): Promise<void> {
         alter table report_delivery_logs add column if not exists error text;
         alter table report_delivery_logs add column if not exists created_at timestamp not null default now();
 
-        create unique index if not exists report_delivery_success_uq
-          on report_delivery_logs (partner_name, report_date)
-          where status = 'sent';
 
         update transactions set group_code = left(service_id, 6) where coalesce(group_code, '') = '';
         update transactions set service_partner = network where service_partner is null and network is not null;
