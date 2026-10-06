@@ -13,7 +13,7 @@ export function nigeriaDateString(date = new Date()): string {
     day: "2-digit",
   }).formatToParts(date);
   const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
-  return \`${get("year")}-${get("month")}-${get("day")}\`;
+  return `${get("year")}-${get("month")}-${get("day")}`;
 }
 
 export function previousNigeriaDate(date = new Date()): string {
@@ -24,7 +24,7 @@ export function previousNigeriaDate(date = new Date()): string {
 }
 
 function validDate(value: string): boolean {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(\`\${value}T00:00:00Z\`));
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
 }
 
 function recipientList(value: string): string[] {
@@ -102,7 +102,7 @@ async function sendViaResend(args: {
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
-      Authorization: \`Bearer \${apiKey}\`,
+      Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -117,7 +117,7 @@ async function sendViaResend(args: {
 
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(body?.message || body?.error || \`Email provider returned HTTP \${response.status}\`);
+    throw new Error(body?.message || body?.error || `Email provider returned HTTP ${response.status}`);
   }
   return String(body?.id ?? "");
 }
@@ -144,7 +144,7 @@ export async function sendPartnerReport(
     return { status: "already_sent" as const };
   }
 
-  const partnerCondition = sql\`(${transactions.transactionAt} + interval '1 hour')::date = \${reportDate} and coalesce(${transactions.servicePartner}, ${transactions.network}, '') = \${setting.partnerName}\`;
+  const partnerCondition = sql`(${transactions.transactionAt} + interval '1 hour')::date = ${reportDate} and coalesce(${transactions.servicePartner}, ${transactions.network}, '') = ${setting.partnerName}`;
 
   const rows = await db
     .select({
@@ -164,27 +164,27 @@ export async function sendPartnerReport(
 
   const [summary] = await db
     .select({
-      txns: sql<number>\`coalesce(sum(${transactions.txnCount}),0)::int\`,
-      revenue: sql<number>\`coalesce(sum(${transactions.revenue}::numeric),0)\`.mapWith(Number),
+      txns: sql<number>`coalesce(sum(${transactions.txnCount}),0)::int`,
+      revenue: sql<number>`coalesce(sum(${transactions.revenue}::numeric),0)`.mapWith(Number),
     })
     .from(transactions)
     .where(partnerCondition);
 
   const attachment = reportWorkbook(rows);
-  const filename = \`BRICCS_VAS_Report_\${setting.partnerName.replace(/[^a-zA-Z0-9_-]+/g, "_")}_\${reportDate}.xlsx\`;
+  const filename = `BRICCS_VAS_Report_${setting.partnerName.replace(/[^a-zA-Z0-9_-]+/g, "_")}_${reportDate}.xlsx`;
   const to = recipientList(setting.email);
   const cc = recipientList(setting.cc ?? "");
 
-  if (!to.length) throw new Error(\`No recipient email configured for \${setting.partnerName}.\`);
+  if (!to.length) throw new Error(`No recipient email configured for ${setting.partnerName}.`);
 
-  const subject = \`BRICCS VAS Service Report - \${setting.partnerName} - \${reportDate}\`;
-  const html = \`
+  const subject = `BRICCS VAS Service Report - ${setting.partnerName} - ${reportDate}`;
+  const html = `
     <p>Dear Partner,</p>
-    <p>Please find attached the VAS service report for <strong>\${setting.partnerName}</strong> for <strong>\${reportDate}</strong>.</p>
-    <p><strong>Transactions:</strong> \${Number(summary?.txns ?? 0).toLocaleString()}<br/>
-    <strong>Gross Revenue:</strong> NGN \${Number(summary?.revenue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+    <p>Please find attached the VAS service report for <strong>${setting.partnerName}</strong> for <strong>${reportDate}</strong>.</p>
+    <p><strong>Transactions:</strong> ${Number(summary?.txns ?? 0).toLocaleString()}<br/>
+    <strong>Gross Revenue:</strong> NGN ${Number(summary?.revenue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
     <p>Regards,<br/>BRICCS International Ideal Limited</p>
-  \`;
+  `;
 
   try {
     const messageId = await sendViaResend({ to, cc, subject, html, filename, attachment });
