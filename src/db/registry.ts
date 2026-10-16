@@ -83,6 +83,8 @@ export const SEEDED_SERVICE_IDS: string[] = [
   "234102200008616",
   "234102200008618",
   "234102200007152",
+  "234102200008095",
+  "234102200008791",
 ];
 
 export function groupOf(serviceId: string): string {
